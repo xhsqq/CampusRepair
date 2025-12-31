@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}报修列表 - 校园报修系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>报修工单列表</h3>
+    {% if session.role == 'student' %}
+    <a href="{{ url_for('repairs_new') }}" class="btn btn-primary">新建报修</a>
+    {% endif %}
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>类别/地点</th>
+                        <th>紧急程度</th>
+                        <th>当前状态</th>
+                        <th>提交时间</th>
+                        <th class="text-end pe-4">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repair in repairs %}
+                    <tr>
+                        <td class="ps-4 text-muted">#{{ repair.id }}</td>
+                        <td>
+                            <div class="fw-bold">{{ repair.category }}</div>
+                            <small class="text-muted">{{ repair.location }}</small>
+                        </td>
+                        <td>
+                            {% if repair.urgency_level == 3 %}
+                                <span class="badge bg-danger">高</span>
+                            {% elif repair.urgency_level == 2 %}
+                                <span class="badge bg-warning text-dark">中</span>
+                            {% else %}
+                                <span class="badge bg-info">低</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set status_map = {'NEW': 'primary', 'ASSIGNED': 'info', 'IN_PROGRESS': 'warning', 'DONE': 'success', 'CANCELED': 'secondary'} %}
+                            {% set status_text = {'NEW': '待接单', 'ASSIGNED': '已接单', 'IN_PROGRESS': '处理中', 'DONE': '已完成', 'CANCELED': '已取消'} %}
+                            <span class="badge bg-{{ status_map[repair.status] }}">{{ status_text[repair.status] }}</span>
+                        </td>
+                        <td><small>{{ repair.created_at }}</small></td>
+                        <td class="text-end pe-4">
+                            <a href="{{ url_for('repairs_detail', id=repair.id) }}" class="btn btn-sm btn-outline-primary">查看详情</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">暂无相关工单记录</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

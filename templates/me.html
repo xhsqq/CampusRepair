@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}个人中心 - 校园报修系统{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5 text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                    <span class="h2 mb-0">{{ user.name[0] }}</span>
+                </div>
+                <h3 class="mb-1">{{ user.name }}</h3>
+                <p class="text-muted mb-4">{{ '学生' if user.role == 'student' else '维修师傅' }}</p>
+                
+                <div class="text-start border-top pt-4">
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">登录账号 (学号/工号)</label>
+                        <span class="fw-bold">{{ user.username }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">联系电话</label>
+                        <span class="fw-bold">{{ user.phone or '未填写' }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">注册时间</label>
+                        <span class="fw-bold">{{ user.created_at }}</span>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger w-100">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

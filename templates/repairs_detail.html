@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}工单详情 - 校园报修系统{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <!-- 左侧：详情信息 -->
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">工单 #{{ repair.id }} 详细信息</h5>
+                {% set status_text = {'NEW': '待接单', 'ASSIGNED': '已接单', 'IN_PROGRESS': '处理中', 'DONE': '已完成', 'CANCELED': '已取消'} %}
+                <span class="badge bg-primary fs-6">{{ status_text[repair.status] }}</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted">报修人/联系电话</div>
+                    <div class="col-sm-8">{{ repair.contact_name }} / {{ repair.contact_phone }}</div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted">地点/分类</div>
+                    <div class="col-sm-8">{{ repair.location }} / {{ repair.category }}</div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted">故障描述</div>
+                    <div class="col-sm-8 text-break">{{ repair.content }}</div>
+                </div>
+                {% if repair.image_path %}
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted">现场照片</div>
+                    <div class="col-sm-8">
+                        <img src="{{ url_for('static', filename='uploads/' + repair.image_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                    </div>
+                </div>
+                {% endif %}
+                
+                <hr>
+                
+                <!-- 操作区 -->
+                <div class="mt-4">
+                    {% if session.role == 'worker' %}
+                        {% if repair.status == 'NEW' %}
+                        <form method="POST" action="{{ url_for('repairs_action', id=repair.id) }}">
+                            <input type="hidden" name="action" value="assign">
+                            <button type="submit" class="btn btn-danger px-4">我要接单</button>
+                        </form>
+                        {% elif repair.status == 'ASSIGNED' and repair.assignee_id == session.user_id %}
+                        <form method="POST" action="{{ url_for('repairs_action', id=repair.id) }}">
+                            <input type="hidden" name="action" value="start">
+                            <button type="submit" class="btn btn-warning px-4">开始处理</button>
+                        </form>
+                        {% elif repair.status == 'IN_PROGRESS' and repair.assignee_id == session.user_id %}
+                        <form method="POST" action="{{ url_for('repairs_action', id=repair.id) }}">
+                            <input type="hidden" name="action" value="complete">
+                            <div class="mb-3">
+                                <label class="form-label">维修反馈 (可选)</label>
+                                <textarea name="note" class="form-control" placeholder="简要说明维修结果..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success px-4">完成维修</button>
+                        </form>
+                        {% endif %}
+                    {% elif session.role == 'student' and repair.status == 'NEW' %}
+                    <form method="POST" action="{{ url_for('repairs_action', id=repair.id) }}">
+                        <input type="hidden" name="action" value="cancel">
+                        <button type="submit" class="btn btn-outline-secondary px-4">撤回报修</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧：处理日志/时间线 -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">处理动态</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="timeline">
+                    {% for log in logs %}
+                    <div class="mb-4 position-relative ps-4 border-start border-2">
+                        <div class="position-absolute start-0 top-0 translate-middle-x bg-primary rounded-circle" style="width:12px; height:12px; margin-left:-1px;"></div>
+                        <div class="fw-bold small text-primary">{{ log.actor_name }}</div>
+                        <div class="small fw-bold">{{ log.action }}</div>
+                        <div class="text-muted small">{{ log.note }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ log.created_at }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}工作台 - 校园报修系统{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3>你好，{{ session.name }}！</h3>
+        <p class="text-muted">欢迎使用校园报修 Web 系统</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% if session.role == 'student' %}
+    <div class="col-md-4">
+        <div class="card border-0 bg-primary text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">累计报修</h6>
+                <h2 class="display-5 fw-bold">{{ stats.total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-warning text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">处理中</h6>
+                <h2 class="display-5 fw-bold">{{ stats.pending }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-success text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">已完成</h6>
+                <h2 class="display-5 fw-bold">{{ stats.completed }}</h2>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-md-4">
+        <div class="card border-0 bg-info text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">系统总报修</h6>
+                <h2 class="display-5 fw-bold">{{ stats.total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-danger text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">待接单</h6>
+                <h2 class="display-5 fw-bold">{{ stats.pending }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-warning text-white shadow">
+            <div class="card-body py-4">
+                <h6 class="card-title opacity-75">我的处理中</h6>
+                <h2 class="display-5 fw-bold">{{ stats.processing }}</h2>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4">快捷操作</h5>
+                <div class="d-flex gap-3">
+                    {% if session.role == 'student' %}
+                    <a href="{{ url_for('repairs_new') }}" class="btn btn-primary px-4">申请报修</a>
+                    <a href="{{ url_for('repairs_list') }}" class="btn btn-outline-primary px-4">查看我的报修</a>
+                    {% else %}
+                    <a href="{{ url_for('repairs_list', status='NEW') }}" class="btn btn-danger px-4">查看待接单</a>
+                    <a href="{{ url_for('repairs_list') }}" class="btn btn-outline-primary px-4">所有报修工单</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

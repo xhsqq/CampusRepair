@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}登录 - 校园报修系统{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-white text-center py-3">
+                <h4 class="mb-0">欢迎登录</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">用户名</label>
+                        <input type="text" name="username" class="form-control" required placeholder="请输入学号或工号">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">密码</label>
+                        <input type="password" name="password" class="form-control" required placeholder="请输入密码">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">立即登录</button>
+                </form>
+                <div class="text-center mt-3">
+                    <small>还没有账号？<a href="{{ url_for('register') }}">立即注册</a></small>
+                </div>
+                <div class="mt-4 p-2 bg-light rounded">
+                    <small class="text-muted">演示账号：<br>学生: student01 / 123456<br>维修人员: worker01 / 123456</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
